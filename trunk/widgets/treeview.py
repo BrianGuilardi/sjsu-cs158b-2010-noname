@@ -31,7 +31,7 @@ class TreeView(gtk.TreeView):
 	"""
 	View of the MIB tree structure.
 	"""
-	def __init__(self, mibs, textview):
+	def __init__(self, mibs, textview, inputbox):
 		"""
 		Create ourself, passing the TreeStore as our Model.
 		"""
@@ -49,6 +49,7 @@ class TreeView(gtk.TreeView):
 
 		# set the TextView so we can edit text.
 		self.textview = textview
+		self.inputbox = inputbox
 
 		self.connect('row-activated', self.callback)
 
@@ -56,7 +57,8 @@ class TreeView(gtk.TreeView):
 		"""
 		Callback to process the data from expanding a row.
 		"""
-		self.store.get_data(self.set_text, ADDR, path)
+		addr = self.inputbox.get_text()
+		self.store.get_data(self.set_text, addr, path)
 
 	def set_text(self, sendRequestHandle,
 			errorIndication,
