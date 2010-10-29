@@ -25,15 +25,18 @@ import gtk
 
 from widgets.treestore import TreeStore
 
+ADDR = 'localhost'
+
 class TreeView(gtk.TreeView):
 	"""
 	View of the MIB tree structure.
 	"""
-	def __init__(self, mibs):
+	def __init__(self, mibs, textview):
 		"""
 		Create ourself, passing the TreeStore as our Model.
 		"""
-		gtk.TreeView.__init__(self, TreeStore(mibs))
+		self.store = TreeStore(mibs)
+		gtk.TreeView.__init__(self, self.store)
 		self.renderer = gtk.CellRendererText()
 
 		self.column0 = gtk.TreeViewColumn('Name', self.renderer, text=0)
@@ -44,3 +47,31 @@ class TreeView(gtk.TreeView):
 		self.append_column(self.column1)
 		self.append_column(self.column2)
 
+		# set the TextView so we can edit text.
+		self.textview = textview
+
+		self.connect('row-activated', self.callback)
+
+	def callback(self, treeview, path, params=None):
+		"""
+		Callback to process the data from expanding a row.
+		"""
+		self.store.get_data(self.set_text, ADDR, path)
+
+	def set_text(self, sendRequestHandle,
+			errorIndication,
+			errorStatus,
+			errorIndex,
+			varBinds,
+			callbackContext):
+		"""
+		Set the text in the textview.
+		"""
+		text = ''
+		# get each row of data
+		for row in varBinds:
+			# for the name and value of the row, add the value to running text
+			for name, val in row:
+				text = text + '\n' + str(val)
+
+		self.textview.set_text(text)

@@ -1,6 +1,6 @@
 # Copyright (c) 2010 Arthur Mesh
 #               2010 Christopher Nelson
-#
+# 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -19,55 +19,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+from pysnmp.entity.rfc3413.oneliner import cmdgen
 
-from widgets.treeview import TreeView
-from widgets.textview import TextView
+def get_data(function, addr, oid):
+	# Get a command generator
+	#commandgen = cmdgen.AsynCommandGenerator()
+	commandgen = cmdgen.CommandGenerator()
+	# Build the command
+	ls = [int(bit) for bit in oid.split('.')]
+	#ls.append(0)
+	tup = tuple(ls)
 
-class Window(gtk.Window):
-	"""
-	Top-level window of the application.
-	"""
-	
-	def delete_event(self, widget, event, data=None):
-		"""
-		Close the window and exit.
-		"""
-		gtk.main_quit()
-		return False
+	# sendRequestHandle = commandgen.asyncNextCmd(
+	# 		cmdgen.CommunityData('noname', 'public'),
+	# 		cmdgen.UdpTransportTarget((addr, 161)),
+	# 		(tup,),
+	# 		(function, None))
+	# Dispatch the command, with the given callback
+	# commandgen.snmpEngine.transportDispatcher.runDispatcher()
 
-	def __init__(self):
-		"""
-		Create the top-level window and add children to it.
-		"""
-		gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
-		
-		self.scrolled = gtk.ScrolledWindow()
+	errorIndication, errorStatus, errorIndex, varBinds = commandgen.nextCmd(
+			cmdgen.CommunityData('noname', 'public'),
+			cmdgen.UdpTransportTarget((addr, 161)),
+			tup)
 
-		self.set_title("Noname MIB 'Browser'")
-		self.set_size_request(640, 480)
-		self.connect('delete_event', self.delete_event)
-
-		self.textview = TextView()
-
-		self.treeview = TreeView(
-				('TCP-MIB', 'UDP-MIB', 'IF-MIB', 'HOST-RESOURCES-MIB',),
-				self.textview)
-
-		self.vbox = gtk.VBox()
-		self.scrolled.add_with_viewport(self.treeview)
-		self.vbox.pack_start(self.scrolled)
-		self.vbox.pack_start(self.textview)
-
-		self.add(self.vbox)
-
-		self.show_all()
-
-	def run(self):
-		"""
-		Run the application.
-		"""
-		gtk.main()
-		return
+	function(0, errorIndication, errorStatus, errorIndex, varBinds, None)

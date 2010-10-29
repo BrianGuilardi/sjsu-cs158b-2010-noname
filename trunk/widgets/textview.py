@@ -23,51 +23,20 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-from widgets.treeview import TreeView
-from widgets.textview import TextView
-
-class Window(gtk.Window):
+class TextView(gtk.TextView):
 	"""
-	Top-level window of the application.
+	Text of the MIB data we're viewing.
 	"""
-	
-	def delete_event(self, widget, event, data=None):
-		"""
-		Close the window and exit.
-		"""
-		gtk.main_quit()
-		return False
-
 	def __init__(self):
 		"""
-		Create the top-level window and add children to it.
+		Create the TextView with no text.
 		"""
-		gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
-		
-		self.scrolled = gtk.ScrolledWindow()
-
-		self.set_title("Noname MIB 'Browser'")
-		self.set_size_request(640, 480)
-		self.connect('delete_event', self.delete_event)
-
-		self.textview = TextView()
-
-		self.treeview = TreeView(
-				('TCP-MIB', 'UDP-MIB', 'IF-MIB', 'HOST-RESOURCES-MIB',),
-				self.textview)
-
-		self.vbox = gtk.VBox()
-		self.scrolled.add_with_viewport(self.treeview)
-		self.vbox.pack_start(self.scrolled)
-		self.vbox.pack_start(self.textview)
-
-		self.add(self.vbox)
-
-		self.show_all()
-
-	def run(self):
+		gtk.TextView.__init__(self)
+		self.set_editable(False)
+	
+	def set_text(self, text):
 		"""
-		Run the application.
+		Set the text in this view's buffer.
 		"""
-		gtk.main()
-		return
+		if text is not None:
+			self.get_buffer().set_text(text)
