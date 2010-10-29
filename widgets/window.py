@@ -50,14 +50,22 @@ class Window(gtk.Window):
 		self.set_size_request(640, 480)
 		self.connect('delete_event', self.delete_event)
 
+		label = gtk.Label('Address: ')
+		inputbox = gtk.Entry()
+		self.hbox = gtk.HBox()
+		self.hbox.pack_start(label, expand = False)
+		self.hbox.pack_start(inputbox)
+
 		self.textview = TextView()
 
 		self.treeview = TreeView(
 				('TCP-MIB', 'UDP-MIB', 'IF-MIB', 'HOST-RESOURCES-MIB',),
-				self.textview)
+				self.textview,
+				inputbox)
 
 		self.vbox = gtk.VBox()
 		self.scrolled.add_with_viewport(self.treeview)
+		self.vbox.pack_start(self.hbox, expand=False)
 		self.vbox.pack_start(self.scrolled)
 		self.vbox.pack_start(self.textview)
 
