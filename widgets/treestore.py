@@ -24,6 +24,7 @@ pygtk.require('2.0')
 import gtk
 
 from snmp.builder import Builder
+from snmp.get_data import get_data
 
 class TreeStore(gtk.TreeStore):
 	"""
@@ -48,6 +49,7 @@ class TreeStore(gtk.TreeStore):
 		"""
 		parts = builder.get_parts()
 
+		# Build tree
 		for part in parts:
 			old_part = None
 			labels = part[0]
@@ -63,18 +65,28 @@ class TreeStore(gtk.TreeStore):
 					full_oid = full_oid + '.' + str(oid)
 	
 				match = False
+				# if the tree is empty, add the item
 				if iterator is None:
 					old_part = self.append(old_part, [label, oid, full_oid ])
 					continue
 				else:
+					# search for a match
 					while iterator:
 						if self.get_value(iterator, 0) == label:
 							match = True
 							break
 						else:
 							iterator = self.iter_next(iterator)
+				# add the item if we didn't find a match
 				if not match:
 					old_part = self.append(old_part, [label, oid, full_oid])
 				else:
 					old_part = iterator
-					# old_part = self.append(old_part, None)
+
+	def get_data(self, function, addr, path):
+		"""
+		Set the SNMP data if the row is a leaf node.
+		"""
+		if self.iter_children(self.get_iter(path)) is None:
+			oid = self.get_value(self.get_iter(path), 2)
+			get_data(function, addr, oid)
