@@ -1,3 +1,4 @@
+package Request;
 
 public class NameRequest extends ClientRequest {
 	private String oid;

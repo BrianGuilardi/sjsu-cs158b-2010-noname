@@ -1,3 +1,4 @@
+package Request;
 
 public class ListRequest extends ClientRequest {
 	private String device;

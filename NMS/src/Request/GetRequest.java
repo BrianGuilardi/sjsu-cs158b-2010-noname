@@ -1,3 +1,5 @@
+package Request;
+
 
 public class GetRequest extends ClientRequest {
 	public GetRequest(String EName, String OID) {

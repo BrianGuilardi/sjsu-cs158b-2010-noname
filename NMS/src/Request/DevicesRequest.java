@@ -1,3 +1,5 @@
+package Request;
+
 public class DevicesRequest extends ClientRequest {
 	public DevicesRequest() {
 		super();

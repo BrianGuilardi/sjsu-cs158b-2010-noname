@@ -1,3 +1,4 @@
+package Request;
 
 public class SetRequest extends ClientRequest {
 	public SetRequest(String EName, String OID, String Value) {
