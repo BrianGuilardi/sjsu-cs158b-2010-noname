@@ -1,3 +1,5 @@
+package Request;
+
 
 public class ClientRequest {
 	public RequestType Type;

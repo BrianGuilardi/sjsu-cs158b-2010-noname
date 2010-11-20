@@ -1,3 +1,4 @@
+package Request;
 
 public class InvalidRequest extends ClientRequest {
 	private String error;

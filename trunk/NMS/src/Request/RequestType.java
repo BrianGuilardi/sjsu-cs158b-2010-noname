@@ -1,3 +1,4 @@
+package Request;
 
 public enum RequestType {
 	Set ("Set <dev> <oid> <val>		# set <val> of <oid> on a given <dev>"),
