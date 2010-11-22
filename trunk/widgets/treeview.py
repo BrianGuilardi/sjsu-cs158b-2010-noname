@@ -53,12 +53,14 @@ class TreeView(gtk.TreeView):
 
 		self.connect('row-activated', self.callback)
 
+		self.func = 'get'
+
 	def callback(self, treeview, path, params=None):
 		"""
 		Callback to process the data from expanding a row.
 		"""
 		addr = self.inputbox.get_text()
-		self.store.get_data(self.set_text, addr, path)
+		self.store.get_data(self.set_text, self.func, addr, path)
 
 	def set_text(self, sendRequestHandle,
 			errorIndication,
@@ -70,10 +72,34 @@ class TreeView(gtk.TreeView):
 		Set the text in the textview.
 		"""
 		text = ''
-		# get each row of data
-		for row in varBinds:
-			# for the name and value of the row, add the value to running text
-			for name, val in row:
-				text = text + '\n' + str(val)
+		if self.func == 'get-next':
+			# get each row of data
+			for row in varBinds:
+				# for the name and value of the row, add the value to running text
+				for name, val in row:
+					text = text + '\n' + str(val)
 
+		elif self.func == 'get':
+			# Extract the value out of the singleton
+			for name, val in varBinds:
+				text = text + '\n' + str(val)
+		
+		elif self.func == 'get-bulk':
+			for row in varBinds:
+				# for the name and value of the row, add value
+				# bulk can return zero-length rows
+				if len(row) > 0:
+					for name, val in row:
+						text = text + '\n' + str(val)
+
+		# output can have arbitrary unicode, including embedded null,
+		# which gtk, being C, doesn't deal well with.  Replace
+		# embedded nulls with empty string
+		text = text.replace('\x00', '').decode('utf-8', 'replace').encode('utf-8')
 		self.textview.set_text(text)
+
+	def change_func(self, func):
+		"""
+		Change which function we execute.
+		"""
+		self.func = func
