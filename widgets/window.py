@@ -45,6 +45,7 @@ class Window(gtk.Window):
 		gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
 		
 		self.scrolled = gtk.ScrolledWindow()
+		self.scrolled_text = gtk.ScrolledWindow()
 
 		self.set_title("Noname MIB 'Browser'")
 		self.set_size_request(640, 480)
@@ -63,15 +64,37 @@ class Window(gtk.Window):
 				self.textview,
 				inputbox)
 
+		self.radio_box = gtk.HBox()
+		button = gtk.RadioButton(None, "Get")
+		button.connect("toggled", self.change_func, "get")
+		self.radio_box.pack_start(button)
+		button = gtk.RadioButton(button, "Get-Next")
+		button.connect("toggled", self.change_func, "get-next")
+		self.radio_box.pack_start(button)
+		button = gtk.RadioButton(button, "Get-Bulk")
+		button.connect("toggled", self.change_func, "get-bulk")
+		self.radio_box.pack_start(button)
+
 		self.vbox = gtk.VBox()
 		self.scrolled.add_with_viewport(self.treeview)
+		self.scrolled_text.add_with_viewport(self.textview)
 		self.vbox.pack_start(self.hbox, expand=False)
+		self.vbox.pack_start(self.radio_box, expand=False)
 		self.vbox.pack_start(self.scrolled)
-		self.vbox.pack_start(self.textview)
+		self.vbox.pack_start(self.scrolled_text)
 
 		self.add(self.vbox)
 
+		self.change_func(None, 'get')
+
 		self.show_all()
+
+	def change_func(self, widget, data=None):
+		"""
+		Change which function we execute.
+		"""
+		self.func = data
+		self.treeview.change_func(self.func)
 
 	def run(self):
 		"""
