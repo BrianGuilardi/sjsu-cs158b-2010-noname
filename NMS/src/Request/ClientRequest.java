@@ -10,7 +10,12 @@ public class ClientRequest {
 		/* even dirtier way of getting rid of quotes */
 		for (int i = 0; i < tokens.length; i++)
 			tokens[i] = tokens[i].replaceAll("^\"+", "").replaceAll("\"+$", "");
-
+		
+		if (tokens[0].equalsIgnoreCase("login")) {
+			if (tokens.length != 3)
+				return new InvalidRequest("can't parse Login request");
+			return new LoginRequest(tokens[1], tokens[2]);
+		}
 		if (tokens[0].equalsIgnoreCase("set")) {
 			if (tokens.length != 4)
 				return new InvalidRequest("can't parse Set request");

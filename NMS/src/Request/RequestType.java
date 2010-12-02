@@ -1,6 +1,7 @@
 package Request;
 
 public enum RequestType {
+	Login ("Login <user> <password>		# Login to the system using credentials"),
 	Set ("Set <dev> <oid> <val>		# set <val> of <oid> on a given <dev>"),
 	Get ("Get <dev> <oid>			# get value of <oid> on a given <dev>"),
 	Devices ("Devices				# list available network elements"),
