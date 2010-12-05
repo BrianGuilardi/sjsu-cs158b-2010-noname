@@ -70,6 +70,7 @@ class Window(gtk.Window):
 		label = gtk.Label('Password: ')
 		self.login_box.pack_start(label, expand = False)
 		self.passwd_box = gtk.Entry()
+		self.passwd_box.set_visibility(False)
 		self.login_box.pack_start(self.passwd_box)
 		button = gtk.Button('Login')
 		button.connect('clicked', self.login)
