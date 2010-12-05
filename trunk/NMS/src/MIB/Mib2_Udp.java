@@ -50,5 +50,5 @@ public class Mib2_Udp implements MIB {
 	
 	private TreeMap<String, String> oids;
 	private TreeMap<String, String> names;
-	private final String prefix = "1.3.6.1.2.1.6.";
+	private final String prefix = "1.3.6.1.2.1.7.";
 }
