@@ -66,3 +66,14 @@ class NMSAccessor(object):
 
 		data = data.split(' ')
 		return data[1]
+
+	def set_value(self, device, oid, value):
+		""""
+		Set the value associated with the OID.
+		"""
+		message = 'set %s %s %s \n' % (device, oid, value)
+		self.sock.send(message)
+		data = self.sock.recv(BUFFER_SIZE)
+
+		data = data.split(' ')
+		return data[1:]
