@@ -35,6 +35,9 @@ class TreeView(gtk.TreeView):
 		"""
 		Create ourself, passing the TreeStore as our Model.
 		"""
+		self.nms_accessor = nms_accessor
+		self.device = device
+
 		self.store = TreeStore(nms_accessor, device)
 		gtk.TreeView.__init__(self, self.store)
 		self.renderer = gtk.CellRendererText()
@@ -58,8 +61,9 @@ class TreeView(gtk.TreeView):
 		"""
 		Callback to process the data from expanding a row.
 		"""
-		addr = self.inputbox.get_text()
-		self.store.get_data(self.set_text, self.func, addr, path)
+		#addr = self.inputbox.get_text()
+		self.store.get_data(self.set_text, 'get', 
+				self.nms_accessor, self.device, path)
 
 	def set_text(self, sendRequestHandle,
 			errorIndication,
@@ -72,24 +76,33 @@ class TreeView(gtk.TreeView):
 		"""
 		text = ''
 		if self.func == 'get-next':
+			"""
 			# get each row of data
 			for row in varBinds:
 				# for the name and value of the row, add the value to running text
 				for name, val in row:
 					text = text + '\n' + str(val)
+			"""
+			text = varBinds
 
 		elif self.func == 'get':
+			"""
 			# Extract the value out of the singleton
 			for name, val in varBinds:
 				text = text + '\n' + str(val)
+			"""
+			text = varBinds
 		
 		elif self.func == 'get-bulk':
+			"""
 			for row in varBinds:
 				# for the name and value of the row, add value
 				# bulk can return zero-length rows
 				if len(row) > 0:
 					for name, val in row:
 						text = text + '\n' + str(val)
+			"""
+			text = varBinds
 
 		# output can have arbitrary unicode, including embedded null,
 		# which gtk, being C, doesn't deal well with.  Replace

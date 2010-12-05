@@ -24,7 +24,7 @@ pygtk.require('2.0')
 import gtk
 
 from snmp.nms_builder import Builder
-from snmp.get_data import get_data, next_data, bulk_data
+from snmp.nms_get_data import get_data, next_data, bulk_data
 
 class TreeStore(gtk.TreeStore):
 	"""
@@ -89,11 +89,10 @@ class TreeStore(gtk.TreeStore):
 				else:
 					old_part = iterator
 
-	def get_data(self, function, which, addr, path):
+	def get_data(self, function, which, nms_accessor, device, path):
 		"""
 		Set the SNMP data if the row is a leaf node.
 		"""
 		#if self.iter_children(self.get_iter(path)) is None:
-		#oid = self.get_value(self.get_iter(path), 2)
-		#self.functions[which](function, addr, oid)
-		pass
+		oid = self.get_value(self.get_iter(path), 2)
+		self.functions[which](function, nms_accessor, device , oid)

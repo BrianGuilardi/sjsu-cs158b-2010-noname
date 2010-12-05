@@ -55,3 +55,14 @@ class NMSAccessor(object):
 
 		data = data.split(' ')
 		return data[1]
+
+	def get_value(self, device, oid):
+		"""
+		Get the data associated with this OID on this device.
+		"""
+		message = 'get %s %s \n' % (device, oid)
+		self.sock.send(message)
+		data = self.sock.recv(BUFFER_SIZE)
+
+		data = data.split(' ')
+		return data[1]
