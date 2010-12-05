@@ -23,22 +23,24 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
-from snmp.builder import Builder
+from snmp.nms_builder import Builder
 from snmp.get_data import get_data, next_data, bulk_data
 
 class TreeStore(gtk.TreeStore):
 	"""
 	Store the data for building the tree.
 	"""
-	def __init__(self, mibs):
+	def __init__(self, nms_accessor, device):
 		"""
 		Create the store.
 		"""
 		gtk.TreeStore.__init__(self, str, int, str)
 
+		self.nms_accessor = nms_accessor
+		self.device = device
+
 		self.builders = []
-		for mib in mibs:
-			self.builders.append(Builder(mib))
+		self.builders.append(Builder(nms_accessor))
 
 		for builder in self.builders:
 			self.create_rows(builder)
@@ -51,7 +53,7 @@ class TreeStore(gtk.TreeStore):
 		"""
 		Create a row of the tree.
 		"""
-		parts = builder.get_parts()
+		parts = builder.get_parts(self.device)
 
 		# Build tree
 		for part in parts:
@@ -71,7 +73,7 @@ class TreeStore(gtk.TreeStore):
 				match = False
 				# if the tree is empty, add the item
 				if iterator is None:
-					old_part = self.append(old_part, [label, oid, full_oid ])
+					old_part = self.append(old_part, [label, int(oid), full_oid ])
 					continue
 				else:
 					# search for a match
@@ -83,7 +85,7 @@ class TreeStore(gtk.TreeStore):
 							iterator = self.iter_next(iterator)
 				# add the item if we didn't find a match
 				if not match:
-					old_part = self.append(old_part, [label, oid, full_oid])
+					old_part = self.append(old_part, [label, int(oid), full_oid])
 				else:
 					old_part = iterator
 
@@ -92,5 +94,6 @@ class TreeStore(gtk.TreeStore):
 		Set the SNMP data if the row is a leaf node.
 		"""
 		#if self.iter_children(self.get_iter(path)) is None:
-		oid = self.get_value(self.get_iter(path), 2)
-		self.functions[which](function, addr, oid)
+		#oid = self.get_value(self.get_iter(path), 2)
+		#self.functions[which](function, addr, oid)
+		pass

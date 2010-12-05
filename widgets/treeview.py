@@ -31,11 +31,11 @@ class TreeView(gtk.TreeView):
 	"""
 	View of the MIB tree structure.
 	"""
-	def __init__(self, mibs, textview, inputbox):
+	def __init__(self, textview, nms_accessor, device):
 		"""
 		Create ourself, passing the TreeStore as our Model.
 		"""
-		self.store = TreeStore(mibs)
+		self.store = TreeStore(nms_accessor, device)
 		gtk.TreeView.__init__(self, self.store)
 		self.renderer = gtk.CellRendererText()
 
@@ -49,7 +49,6 @@ class TreeView(gtk.TreeView):
 
 		# set the TextView so we can edit text.
 		self.textview = textview
-		self.inputbox = inputbox
 
 		self.connect('row-activated', self.callback)
 
