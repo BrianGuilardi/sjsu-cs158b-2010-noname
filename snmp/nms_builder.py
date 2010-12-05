@@ -58,7 +58,7 @@ class Builder(object):
 			label = label_prefix + self.nms_accessor.get_label(device, oid).strip()
 
 			oid = oid.split('.')
-			label = label.split('.')[1:]
+			label = label_prefix.split('.')[1:]
 
 			parts.append((label, oid))
 
