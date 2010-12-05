@@ -50,6 +50,7 @@ class Window(gtk.Window):
 		self.scrolled_text = None
 		self.treeview = None
 		self.textview = None
+		self.set_box = None
 
 		self.set_title("Noname MIB 'Browser'")
 		self.set_size_request(640, 480)
@@ -60,13 +61,6 @@ class Window(gtk.Window):
 		self.hbox = gtk.HBox()
 		self.hbox.pack_start(label, expand = False)
 		self.hbox.pack_start(self.inputbox)
-
-		#self.textview = TextView()
-
-		#self.treeview = TreeView(
-		#		('TCP-MIB', 'UDP-MIB', 'IF-MIB', 'HOST-RESOURCES-MIB',),
-		#		self.textview,
-		#		inputbox)
 
 		self.login_box = gtk.HBox()
 		label = gtk.Label('Username: ')
@@ -81,31 +75,11 @@ class Window(gtk.Window):
 		button.connect('clicked', self.login)
 		self.login_box.pack_start(button)
 
-		"""
-		self.radio_box = gtk.HBox()
-		button = gtk.RadioButton(None, "Get")
-		button.connect("toggled", self.change_func, "get")
-		self.radio_box.pack_start(button)
-		button = gtk.RadioButton(button, "Get-Next")
-		button.connect("toggled", self.change_func, "get-next")
-		self.radio_box.pack_start(button)
-		button = gtk.RadioButton(button, "Get-Bulk")
-		button.connect("toggled", self.change_func, "get-bulk")
-		self.radio_box.pack_start(button)
-		"""
-
 		self.vbox = gtk.VBox()
-		#self.scrolled.add_with_viewport(self.treeview)
-		#self.scrolled_text.add_with_viewport(self.textview)
 		self.vbox.pack_start(self.hbox, expand=False)
 		self.vbox.pack_start(self.login_box, expand = False)
-		#self.vbox.pack_start(self.radio_box, expand=False)
-		#self.vbox.pack_start(self.scrolled)
-		#self.vbox.pack_start(self.scrolled_text)
 
 		self.add(self.vbox)
-
-		#self.change_func(None, 'get')
 
 		self.show_all()
 
@@ -138,6 +112,23 @@ class Window(gtk.Window):
 		Change which device we're looking at.
 		"""
 
+		if self.set_box is None:
+			self.set_box = gtk.HBox()
+			label = gtk.Label('OID: ')
+			self.set_box.pack_start(label, expand = False)
+			self.set_entry_oid = gtk.Entry()
+			self.set_box.pack_start(self.set_entry_oid)
+			label = gtk.Label('Value: ')
+			self.set_box.pack_start(label, expand = False)
+			self.set_entry_value = gtk.Entry()
+			self.set_box.pack_start(self.set_entry_value)
+			button = gtk.Button('Set')
+			button.connect('clicked', self.set_value)
+			self.set_box.pack_start(button, expand = False)
+			
+			self.vbox.pack_start(self.set_box, expand = False)
+
+
 		if self.scrolled is not None:
 			self.vbox.remove(self.scrolled)
 		if self.scrolled_text is not None:
@@ -164,14 +155,13 @@ class Window(gtk.Window):
 
 		self.show_all()
 	
-	'''
-	def change_func(self, widget, data=None):
+	def set_value(self, widget, data = None):
 		"""
-		Change which function we execute.
+		Set the value at the OID in self.set_entry_oid
 		"""
-		self.func = data
-		self.treeview.change_func(self.func)
-	'''
+		self.nms_accessor.set_value(self.combobox.get_active_text(),
+				self.set_entry_oid.get_text(),
+				self.set_entry_value.get_text())
 
 	def run(self):
 		"""
